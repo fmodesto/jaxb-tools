@@ -66,6 +66,7 @@
 			<xs:element name="sequence" type="sequenceType" minOccurs="0"/>
 			<xs:element name="simpleTypes" type="simpleTypesType" minOccurs="0"/>
 			<xs:element name="elementWithListAttribute1" type="elementWithListAttribute1" minOccurs="0"/>
+			<xs:element name="elementWithMapAttribute1" type="elementWithMapAttribute1" minOccurs="0"/>
 			<xs:element name="facet" type="facetType" minOccurs="0"/>
 			<xs:element name="ignored" type="xs:string">
 			</xs:element>
@@ -149,6 +150,9 @@
 	</xs:complexType>
 	<xs:complexType name="elementWithListAttribute1">
 		<xs:attribute name="list1" type="listType1" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="elementWithMapAttribute1">
+    <xs:anyAttribute/>
 	</xs:complexType>
 	<xs:simpleType name="listType1">
 		<xs:list itemType="patternType1"/>
