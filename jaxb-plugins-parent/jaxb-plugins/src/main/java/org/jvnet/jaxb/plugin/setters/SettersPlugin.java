@@ -138,9 +138,12 @@ public class SettersPlugin extends AbstractParameterizablePlugin {
 						: unboxifiedSetter;
 
 				if (setter == null) {
+                    final String propertyName = fieldOutline.getPropertyInfo().getName(false);
 					final JMethod generatedSetter = theClass.method(
 							JMod.PUBLIC, theClass.owner().VOID, setterName);
 					final JVar value = generatedSetter.param(type, "value");
+                    generatedSetter.javadoc().add("Sets the value of the " + propertyName + " property.");
+                    generatedSetter.javadoc().addParam(value).append("The value to set, can be null.");
 
 					mode.generateSetter(fieldOutline, theClass,
 							generatedSetter, value);

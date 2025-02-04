@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.sun.tools.xjc.BadCommandLineException;
 import org.xml.sax.ErrorHandler;
 
 import com.sun.codemodel.JClass;
@@ -90,6 +91,9 @@ import com.sun.tools.xjc.outline.Outline;
  */
 public class FluentApiPlugin extends Plugin
 {
+    public static final String OPTION = "-Xfluent-api-list=";
+    private boolean fluentList = true;
+
     @Override
     public String getOptionName()
     {
@@ -99,7 +103,8 @@ public class FluentApiPlugin extends Plugin
     @Override
     public String getUsage()
     {
-        return "  -Xfluent-api        :  enable fluent api for generated code";
+        return "  -Xfluent-api                 :  enable fluent api for generated code\n"
+             + "  -Xfluent-api-list=true|false :  generate fluent api using list getter (default true)";
     }
 
     @Override
@@ -128,7 +133,7 @@ public class FluentApiPlugin extends Plugin
             			fluentMethodInfoList.add(new FluentMethodInfo(jmethod, FLUENT_SETTER, isOverride));
             			methodNames.add(jmethod.name());
 	            	}
-	            	else if (isListGetterMethod(jmethod)) {
+	            	else if (fluentList && isListGetterMethod(jmethod)) {
 	            		fluentMethodInfoList.add(new FluentMethodInfo(jmethod, FLUENT_LIST_SETTER, isOverride));
 	            		// Originally proposed by Alex Wei ozgwei@dev.java.net:
 	            		// https://jaxb2-commons.dev.java.net/issues/show_bug.cgi?id=12
@@ -230,5 +235,19 @@ public class FluentApiPlugin extends Plugin
         return type.isPrimitive()
             && codeModel.INT.equals(
                 JType.parse(codeModel, type.name()));
+    }
+
+    @Override
+    public int parseArgument(Options opt, String[] args, int i) throws BadCommandLineException {
+        String arg = args[i].trim();
+        if (arg.startsWith(OPTION)) {
+            String value = arg.substring(OPTION.length());
+            if (!value.matches("true|false")) {
+                throw new BadCommandLineException("Invalid value for " + OPTION + " option: " + value);
+            }
+            fluentList = "true".equals(value);
+            return 1;
+        }
+        return 0;
     }
 }
